@@ -20,7 +20,7 @@ const cutString = function (original,before,after,index) {
 }
 {
   let attack = []
-  const URL = 'mock/messages.1'
+  const URL = 'mock/messages.3'
   const startTime = Date.now()
   const spinner = ora(`正在分析文件: ${URL}`).start()
   var buffer = Buffer.from(fs.readFileSync(URL, {encoding:'binary'}),'binary');
@@ -29,11 +29,13 @@ const cutString = function (original,before,after,index) {
   text.forEach((line) => {
     if (!line.includes('localhost')) {
       if (line.includes('type=ips')) {
-        const time = cutString(line, `time=\"`, `" `)
+        const time = cutString(line, `time=\"`, `"`)
         const msg = cutString(line, `msg=\"`, `"`)
         const src = cutString(line, `src=`, ` `)
         const dst = cutString(line, `dst=`, ` `)
-        attack.push(`时间:${time} 来源:${src} 目标:${dst} 行为:${msg}`)
+        if (!src.includes('10.225')) {
+          attack.push(`时间:${time} 来源:${src} 目标:${dst} 行为:${msg}`)
+        }
       }
     }
   }, this)
